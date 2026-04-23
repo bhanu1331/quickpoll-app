@@ -8,7 +8,7 @@ app.use(express.json());
 const db = { polls: [] };
 let idCounter = 1;
 
-// Create poll
+
 app.post('/polls', (req, res) => {
   const { question, options } = req.body;
 
@@ -16,26 +16,29 @@ app.post('/polls', (req, res) => {
     id: idCounter++,
     question,
     options: options.map(opt => ({ text: opt, votes: 0 })),
-    createdAt: new Date().toISOString()   // ✅ FIX HERE
+    createdAt: new Date().toISOString()
   };
 
   db.polls.push(poll);
   res.json(poll);
 });
 
-// Get all polls
+
 app.get('/polls', (req, res) => {
   res.json(db.polls);
 });
 
-// Vote
+
 app.post('/polls/:id/vote', (req, res) => {
   const poll = db.polls.find(p => p.id == req.params.id);
+
+  if (!poll) return res.status(404).send("Poll not found");
+
   poll.options[req.body.optionIndex].votes++;
   res.json(poll);
 });
 
-// Delete
+
 app.delete('/polls/:id', (req, res) => {
   db.polls = db.polls.filter(p => p.id != req.params.id);
   res.send("Deleted");

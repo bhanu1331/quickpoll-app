@@ -47,17 +47,25 @@ button:hover {
   background: #2f2a45;
   border-radius: 6px;
   margin: 6px 0 15px;
+  position: relative;
 }
 
 .bar {
   height: 25px;
-  line-height: 25px;
-  text-align: center;
   background: linear-gradient(to right, #8b5cf6, #ec4899);
+  transition: width 0.4s ease;
 }
 
 .bar.winner {
   background: linear-gradient(to right, #db2777, #db2777);
+}
+
+.bar-text {
+  position: absolute;
+  left: 10px;
+  top: 3px;
+  font-size: 12px;
+  color: white;
 }
 
 .delete-btn {

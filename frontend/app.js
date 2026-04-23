@@ -1,6 +1,6 @@
 console.log("JS Loaded");
 
-// Add option input
+
 function addOption() {
   const count = document.querySelectorAll(".opt").length;
 
@@ -20,7 +20,7 @@ function addOption() {
   document.getElementById("options").appendChild(wrapper);
 }
 
-// Create poll
+
 async function createPoll() {
   const question = document.getElementById("question").value.trim();
 
@@ -45,7 +45,7 @@ async function createPoll() {
   fetchPolls();
 }
 
-// Fetch polls
+
 async function fetchPolls() {
   const res = await fetch("http://localhost:5000/polls");
   const polls = await res.json();
@@ -61,55 +61,50 @@ async function fetchPolls() {
     card.className = "card";
 
     card.innerHTML = `
-  <h3>${poll.question}</h3>
+      <h3>${poll.question}</h3>
 
-  <p>Total Votes: ${total}</p>
+      <p>Total Votes: ${total}</p>
 
-  <p>Winner: ${
-    maxVotes === 0
-      ? "No votes yet"
-      : poll.options.find(o => o.votes === maxVotes).text
-  }</p>
+      <p>Winner: ${
+        maxVotes === 0
+          ? "No votes yet"
+          : poll.options.find(o => o.votes === maxVotes).text
+      }</p>
 
-  <p>Created: ${
-  poll.createdAt && !isNaN(new Date(poll.createdAt))
-    ? new Date(poll.createdAt).toLocaleString()
-    : "Just now"
-}</p>
+      <p>Created: ${
+        poll.createdAt
+          ? new Date(poll.createdAt).toLocaleString()
+          : "Just now"
+      }</p>
 
-  ${poll.options.map((opt, index) => {
-    const percent = total === 0 ? 0 : Math.round((opt.votes / total) * 100);
-    const isWinner = opt.votes === maxVotes && maxVotes > 0;
+      ${poll.options.map((opt, index) => {
+        const percent = total === 0 ? 0 : Math.round((opt.votes / total) * 100);
+        const isWinner = opt.votes === maxVotes && maxVotes > 0;
 
-    return `
-      <button onclick="vote(${poll.id}, ${index})">
-        ${opt.text}
+        return `
+          <button onclick="vote(${poll.id}, ${index})">
+            ${opt.text}
+          </button>
+
+          <div class="bar-container">
+            <div class="bar ${isWinner ? 'winner' : ''}" style="width:${percent}%"></div>
+            <span class="bar-text">${percent}% (${opt.votes})</span>
+          </div>
+        `;
+      }).join("")}
+
+      <button onclick="deletePoll(${poll.id})" class="delete-btn">
+        Delete Poll
       </button>
-
-      <div class="bar-container">
-        <div class="bar ${isWinner ? 'winner' : ''}" style="width:${percent}%">
-          ${percent}% (${opt.votes})
-        </div>
-      </div>
     `;
-  }).join("")}
-
-  <button onclick="deletePoll(${poll.id})" class="delete-btn">
-    Delete Poll
-  </button>
-`;
 
     container.appendChild(card);
   });
 }
 
-// Vote
-async function vote(id, index) {
-  if (localStorage.getItem("voted_" + id)) {
-    alert("Already voted!");
-    return;
-  }
 
+async function vote(id, index) {
+  
   await fetch(`http://localhost:5000/polls/${id}/vote`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -120,7 +115,7 @@ async function vote(id, index) {
   fetchPolls();
 }
 
-// Delete poll
+
 async function deletePoll(id) {
   await fetch(`http://localhost:5000/polls/${id}`, {
     method: "DELETE"
@@ -129,5 +124,5 @@ async function deletePoll(id) {
   fetchPolls();
 }
 
-// Load
+
 fetchPolls();
